@@ -139,4 +139,69 @@ public class affine {
         System.out.println("After decryption: "+decrypt);
     }
 }
------------------------
+-----------------------TRANSPOSITION CIPHER-------------------
+import java.util.Scanner;
+public class Transposition
+{
+    public static void Cipher(char[][] mat, int n) {
+        System.out.print("Cipher: ");
+        int left=0, bottom=n-1;
+        int top=0, right=n-1;
+        while(top<=bottom && left<=right) {
+            for(int i=left;i<=right;i++) {
+                System.out.print(mat[top][i]+" ");
+            }
+            top++;
+            for(int i=top;i<=bottom;i++) {
+                System.out.print(mat[i][right]+" ");
+            }
+            right--;
+            if(top<=bottom) {
+                for(int i=right;i>=left;i--) {
+                    System.out.print(mat[bottom][i]+" ");
+                }
+                bottom--;
+            }
+            if(left<=right) {
+                for(int i=bottom;i>=top;i--) {
+                    System.out.print(mat[i][left]+" ");
+                }
+                left++;
+            }
+        }
+        System.out.println();
+    }
+	public static void main(String[] args) {
+		Scanner sc = new Scanner(System.in);
+	System.out.print("Enter text: ");
+	    String text = sc.nextLine();
+	    int n = (int)Math.ceil(Math.sqrt(text.length()));
+	    char[][] mat = new char[n][n];
+	    int k = 0;
+	    for(int i=0;i<n;i++) {
+	        for(int j=0;j<n;j++) {
+	            while(k<text.length()) {
+	                if(text.charAt(k)!=' ') {
+	                mat[i][j] = text.charAt(k);
+	                k++;
+	                break;
+	            }
+	            else {
+	                mat[i][j] = ' ';
+	                k++;
+	                break;
+	            }
+	            }
+	        }
+	    }
+	System.out.println("\nMatrix");
+	    for(int i=0;i<n;i++) {
+	        for(int j=0;j<n;j++) {
+	System.out.print(mat[i][j]+" ");
+	        }
+	System.out.println();
+	    }
+	    Cipher(mat,n);
+	}
+}
+----------------
