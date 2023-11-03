@@ -488,4 +488,81 @@ public class AES {
     }
 }
 
+--------------DSS-----------
+import java.util.*;
+import java.math.BigInteger;
+
+public class dss{
+    public static BigInteger[] Sign(BigInteger msg, BigInteger e1, BigInteger d, BigInteger p, BigInteger q){
+        Random random = new Random();
+        BigInteger r = BigInteger.probablePrime(q.bitLength(), random);
+
+        while(!r.gcd(q).equals(BigInteger.ONE)||r.compareTo(q)>0){
+            r = BigInteger.probablePrime(q.bitLength(), random);
+        }
+
+        BigInteger s1 = e1.modPow(r,p).modPow(BigInteger.ONE, q);
+        BigInteger s2 = ((msg.add(s1.multiply(d))).multiply(r.modInverse(q))).modPow(BigInteger.ONE, q);
+
+        BigInteger[] ans = new BigInteger[2];
+        ans[0] = s1;
+        ans[1] = s2;
+
+        System.out.println("r="+r);
+        System.out.println("S1="+s1);
+        System.out.println("S2="+s2);
+        return ans;
+    }
+
+    public static boolean verify(BigInteger msg, BigInteger e1, BigInteger e2, BigInteger s1, BigInteger s2, BigInteger p, BigInteger q){
+        BigInteger pow1 = msg.multiply(s2.modInverse(q));
+        BigInteger pow2 = s1.multiply(s2.modInverse(q));
+
+        BigInteger A = e1.modPow(pow1,p);
+        BigInteger B = e2.modPow(pow2,p);
+        BigInteger ans = A.multiply(B).mod(p).mod(q);
+        System.out.println("V="+ans);
+        return s1.equals(ans);
+
+    }
+        
+    public static void main(String[] args){
+        Random random = new Random();
+        BigInteger p = BigInteger.probablePrime(1000, random);
+        BigInteger q = BigInteger.probablePrime(20, random);
+
+        while(!((p.subtract(BigInteger.ONE)).mod(q)).equals(BigInteger.ZERO)){
+            p = BigInteger.probablePrime(26, random);
+            q = BigInteger.probablePrime(12, random);
+        }
+
+        BigInteger e0 = p.subtract(BigInteger.ONE);
+        do{
+            if(e0.modPow(q,p).equals(BigInteger.ONE))
+                break;
+            e0 = e0.subtract(BigInteger.ONE);   
+        }while(true);
+
+
+        BigInteger d = q.subtract(BigInteger.ONE);
+        do{
+            d = BigInteger.probablePrime(d.bitLength(), random);            
+        }while(d.compareTo(q)>0);
+
+        BigInteger e1 = e0.modPow((p.subtract(BigInteger.ONE)).divide(q),p);
+        BigInteger e2 = e1.modPow(d,p);
+
+        System.out.println("p="+p);
+        System.out.println("q="+q);
+        System.out.println("e0="+e0);
+        System.out.println("e1="+e1);
+        System.out.println("e2="+e2);
+        System.out.println("d="+d);
+
+        BigInteger[] sign = Sign(BigInteger.valueOf(123),e1, d, p, q);
+        System.out.println(verify(BigInteger.valueOf(123), e1, e2, sign[0], sign[1], p, q));
+    }
+}
+-----------------------
+
 
