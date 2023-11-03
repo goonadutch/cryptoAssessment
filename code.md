@@ -757,6 +757,42 @@ def sha512_one_round(message):
 
 print("Enter the message")
 print("The result after one round is:", sha512_one_round(input()))
----------------------
+
+---------------------SHAJAVA----------------
+
+import java.util.Scanner;
+import java.security.NoSuchAlgorithmException;
+import java.security.MessageDigest;
+import java.nio.charset.StandardCharsets;
+import java.math.BigInteger;
+
+class SHA{
+    public static byte[] getSHA(String text) throws NoSuchAlgorithmException{
+        MessageDigest md = MessageDigest.getInstance("SHA-512");
+        return md.digest(text.getBytes(StandardCharsets.UTF_8));
+    }
+    
+    public static String toHex(byte[] hash){
+        BigInteger num = new BigInteger(1, hash);
+        StringBuilder sb = new StringBuilder(num.toString(16));
+        while(sb.length() < 32){
+            sb.append("0");
+        }
+        return sb.toString();
+    }
+    public static void main(String[] args){
+        try{
+            Scanner ss = new Scanner(System.in);
+            System.out.println("Enter the text :");
+            String text = ss.nextLine();
+            System.out.println("Hash : " + toHex(getSHA(text)));
+        }catch(NoSuchAlgorithmException e){
+            System.out.println(e);
+        }
+    }
+}
+
+
+------------------------
 
 
