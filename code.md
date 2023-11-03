@@ -721,6 +721,42 @@ public class SimplifiedDES
         }
        
     }
-------------------------------
+------------------------------SHA-------------------------
+import struct
+import binascii
+
+init_hash = (
+    0x6a09e667f3bcc908, 0xbb67ae8584caa73b, 0x3c6ef372fe94f82b, 0xa54ff53a5f1d36f1,
+    0x510e527fade682d1, 0x9b05688c2b3e6c1f, 0x1f83d9abfb41bd6b, 0x5be0cd19137e2179,
+)
+
+rnd_consts = (0x428a2f98d728ae22,)
+
+def _right_rotate(n, bits):
+    return (n >> bits) | (n << (64 - bits)) & 0xFFFFFFFFFFFFFFFF
+
+def sha512_one_round(message):
+    msg_bytes = bytearray(message, 'utf-8')
+    padding = [0x80] + [0] * (119 - len(msg_bytes) % 128) + list(struct.pack('!Q', len(msg_bytes) << 3))
+    msg_bytes += bytearray(padding[-(128 - len(msg_bytes) % 128):])
+
+    hash_vals = list(init_hash)
+    for i in range(0, len(msg_bytes), 128):
+        w = list(struct.unpack('!16Q', msg_bytes[i:i + 128]))
+        a, b, c, d, e, f, g, h = hash_vals
+        s1 = _right_rotate(e, 14) ^ _right_rotate(e, 18) ^ _right_rotate(e, 41)
+        ch = (e & f) ^ (~e & g)
+        t1 = h + s1 + ch + rnd_consts[0] + w[0]
+        s0 = _right_rotate(a, 28) ^ _right_rotate(a, 34) ^ _right_rotate(a, 39)
+        maj = (a & b) ^ (a & c) ^ (b & c)
+        t2 = s0 + maj
+        h, g, f, e, d, c, b, a = g, f, e, (d + t1) & 0xFFFFFFFFFFFFFFFF, c, b, a, (t1 + t2) & 0xFFFFFFFFFFFFFFFF
+        hash_vals = [(x + y) & 0xFFFFFFFFFFFFFFFF for x, y in zip(hash_vals, (a, b, c, d, e, f, g, h))]
+
+    return binascii.hexlify(b''.join(struct.pack('!Q', h) for h in hash_vals)).decode('utf-8')
+
+print("Enter the message")
+print("The result after one round is:", sha512_one_round(input()))
+---------------------
 
 
