@@ -204,4 +204,75 @@ public class Transposition
 	    Cipher(mat,n);
 	}
 }
-----------------
+----------------RSA----------
+
+import java.util.Scanner;
+
+class Crypto{
+    String alphabet = "abcdefghijklmnopqrstuvwxyz";
+
+    public int modInverse(int a, int n){
+        for(int i = 1; i < n; i++){
+            if((a*i)% n == 1){
+            return i;}
+        }
+        return -1;
+    }
+
+    public int modPower(int a, int e, int n){
+        int result = 1;
+        while(e > 0){
+            if(e % 2 == 1){
+                result = (result * a) % n;
+            }
+            a = (a*a) % n;
+            e = e/2;
+        }
+        return result;
+    }
+
+    public String encrypt(String text, int e, int n){
+        StringBuilder sb = new StringBuilder();
+        for(char c : text.toCharArray()){
+            int index = alphabet.indexOf(c);
+            int encrypted  = modPower(index, e, n);
+            sb.append(encrypted).append(" ");
+        }
+        return sb.toString();
+    }
+    public String decrypt(String text, int d, int n){
+        StringBuilder sb = new StringBuilder();
+        String[] parts = text.trim().split(" ");
+        for(String part : parts){
+            int index = Integer.parseInt(part);
+            int decrypt = modPower(index, d, n);
+            sb.append(alphabet.charAt(decrypt));
+        }
+        return sb.toString();
+    }
+}
+class rsa{
+    public static void main(String[] args){
+        Scanner ss  = new Scanner(System.in);
+        Crypto obj = new Crypto();
+        System.out.print("Enter the text : ");
+        String text = ss.nextLine();
+        System.out.print("Enter prime number 1 : ");
+        int p = ss.nextInt();
+        System.out.print("Enter prime number 2 : ");
+        int q = ss.nextInt();
+        int n = p * q;
+        int phi = (p-1) * (q-1);
+        System.out.print("Enter the exponent value : ");
+        int e = ss.nextInt();
+        //check for gcd
+        int d = obj.modInverse(e, phi);
+        System.out.println("The private key : " + d);
+        String encrypt = obj.encrypt(text, e, n);
+        System.out.println("Encrypted text : " + encrypt);
+        String decrypt = obj.decrypt(encrypt, d, n);
+        System.out.println("Decrypted text : " + decrypt);
+        ss.close();
+    }
+}
+------------------
