@@ -2802,4 +2802,605 @@ rotation - res - animator
     android:valueTo="360"
     xmlns:android="http://schemas.android.com/apk/res/android" />
 
+-----------------------------------
+-------------------------------------
+-----------------------------------
+
+package com.example.gps
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
+
+public class MainActivity extends AppCompatActivity {
+    private static final int REQUEST_LOCATION_PERMISSION = 1;
+    private FusedLocationProviderClient fusedLocationClient;
+    private Button buttonGetLocation;
+    private TextView textViewLatitude;
+    private TextView textViewLongitude;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        buttonGetLocation = findViewById(R.id.buttonGetLocation);
+        textViewLatitude = findViewById(R.id.textViewLatitude);
+        textViewLongitude = findViewById(R.id.textViewLongitude);
+
+        buttonGetLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                    // Permission is granted, fetch the location
+                    fetchLocation();
+                } else {
+                    // Permission is not granted, request it
+                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION_PERMISSION);
+                }
+            }
+        });
+    }
+
+    @SuppressLint("MissingPermission")
+    private void fetchLocation() {
+        fusedLocationClient.getLastLocation()
+                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        if (location != null) {
+                            double latitude = location.getLatitude();
+                            double longitude = location.getLongitude();
+                            textViewLatitude.setText("Latitude: " + latitude);
+                            textViewLongitude.setText("Longitude: " + longitude);
+                        } else {
+                            textViewLatitude.setText("Location not available");
+                            textViewLongitude.setText("Location not available");
+                        }
+                    }
+                });
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_LOCATION_PERMISSION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission granted, fetch the location
+                fetchLocation();
+            } else {
+                // Permission denied, handle it accordingly
+            }
+        }
+    }
+};
+
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+
+        <TextView
+            android:id="@+id/textViewLatitude"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Latitude"
+            android:layout_centerHorizontal="true"
+
+            android:layout_marginTop="16dp" />
+
+        <TextView
+            android:id="@+id/textViewLongitude"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Longitude"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/textViewLatitude"
+            android:layout_marginTop="16dp" />
+
+        <Button
+            android:id="@+id/buttonGetLocation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textViewLongitude"
+            android:layout_gravity="center"
+            android:layout_marginTop="29dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="Get Location" />
+    </RelativeLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+--------------------------------------
+---------------------------------------
+---------------------------------------
+Light sensor 
+package com.example.myapplication;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.app.Service;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+import android.os.Bundle;
+import android.widget.TextView;
+
+public class MainActivity extends AppCompatActivity implements SensorEventListener {
+
+    TextView light_text;
+    TextView light_type;
+    SensorManager sensorManager;
+    Sensor sensor;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        light_text=findViewById(R.id.tv_text);
+        light_type=findViewById(R.id.type_text);
+        sensorManager= (SensorManager) getSystemService(Service.SENSOR_SERVICE);
+        sensor=sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
+
+    }
+
+    @Override
+    protected void onPause(){
+        super.onPause();
+        sensorManager.unregisterListener(this);
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        sensorManager.registerListener(this,sensor,SensorManager.SENSOR_DELAY_NORMAL);
+    }
+    @Override
+    public void onSensorChanged(SensorEvent sensorEvent) {
+        if(sensorEvent.sensor.getType()==Sensor.TYPE_LIGHT){
+            String newText;
+            if(sensorEvent.values[0]==0){
+                newText="Pitch Black";
+            }
+            else if(sensorEvent.values[0]<10){
+                newText="Dark";
+            }
+            else if(sensorEvent.values[0]<=10){
+                newText="Dark";
+            }
+            else if(sensorEvent.values[0]<=50){
+                newText="Grey";
+            }
+            else if(sensorEvent.values[0]<=5000){
+                newText="Normal";
+            }
+            else if(sensorEvent.values[0]<=25000){
+                newText="Incredibly Bright";
+            }
+            else{
+                newText="This light will blind you";
+            }
+
+            light_text.setText(""+ sensorEvent.values[0]);
+            light_type.setText(newText);
+        }
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int i) {
+
+    }
+}
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/relativeLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/cardview_light_background"
+    tools:context=".MainActivity">
+
+    <!-- Textview to show light sensor reading -->
+    <TextView
+        android:id="@+id/type_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_marginTop="128dp"
+        android:text="Brightness"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:text="Light Sensor"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+---------------------------------------
+-----------------------------------------
+----------------------------------------
+
+QR code
+
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/nude"
+        android:text="Camera"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.847" />
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+package com.example.qrcode;
+
+import static android.app.ProgressDialog.show;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
+
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
+
+public class MainActivity extends AppCompatActivity {
+    private Button btn;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        btn=findViewById(R.id.button);
+        btn.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View v) {
+
+                new IntentIntegrator(MainActivity.this).initiateScan();
+
+            }
+
+        });
+    }
+
+    @Override
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+
+        if(result != null) {
+
+            if(result.getContents() == null) {
+
+                Toast.makeText(this,"Scan Cancelled", Toast.LENGTH_LONG).show();
+
+            } else {
+
+                Toast.makeText(this, "Scanned" + result.getContents(), Toast.LENGTH_LONG).show();
+                ClipboardManager clipboard = (ClipboardManager)
+                        getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("Intent", result.getContents());
+                clipboard.setPrimaryClip(clip);
+            }
+
+        } else {
+
+            super.onActivityResult(requestCode, resultCode, data);
+
+        }
+
+    }
+}
+-------------------------------------
+---------------------------------------
+-----------------------------------------
+
+change text size
+
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:gravity="center"
+    tools:context=".MainActivity">
+
+    <EditText
+        android:id="@+id/editText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter text"
+        android:layout_marginBottom="16dp"/>
+
+    <Button
+        android:id="@+id/changeSizeButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Change Text Size"
+        android:onClick="changeTextSize"
+        android:layout_gravity="center"/>
+
+    <TextView
+        android:id="@+id/displayTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:layout_gravity="center"
+        android:layout_marginTop="16dp"
+        android:textSize="20sp"/>
+
+</LinearLayout>
+
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+
+    private EditText editText;
+    private TextView displayTextView;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        editText = findViewById(R.id.editText);
+        displayTextView = findViewById(R.id.displayTextView);
+    }
+
+    public void changeTextSize(View view) {
+        String inputText = editText.getText().toString();
+        int textSize = 20; // Default text size in sp
+
+        try {
+            textSize = Integer.parseInt(inputText);
+        } catch (NumberFormatException e) {
+            // Handle invalid input (e.g., non-integer input)
+        }
+
+        displayTextView.setTextSize(textSize);
+    }
+}
+-------------------------------------
+------------------------------------
+-------------------------------------
+
+ATS calculator
+
+package com.example.atscalculator;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+import android.annotation.SuppressLint;
+import android.content.pm.PackageManager;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
+public class MainActivity extends AppCompatActivity implements 
+View.OnClickListener {
+ Button buttonAdd, buttonSub, buttonMul, buttonDiv, notifybtn;
+ EditText editTextN1, editTextN2;
+ TextView textView;
+ int num1, num2;
+ @Override
+ protected void onCreate(Bundle savedInstanceState) {
+ super.onCreate(savedInstanceState);
+ setContentView(R.layout.activity_main);
+ buttonAdd = findViewById(R.id.btn_add);
+ buttonSub = findViewById(R.id.btn_sub);
+ buttonMul = findViewById(R.id.btn_mul);
+ buttonDiv = findViewById(R.id.btn_div);
+ editTextN1 = findViewById(R.id.number1);
+ editTextN2 = findViewById(R.id.number2);
+ textView = findViewById(R.id.result);
+ notifybtn = findViewById(R.id.btn_notify);
+ buttonAdd.setOnClickListener(this::onClick);
+ buttonSub.setOnClickListener(this::onClick);
+ buttonMul.setOnClickListener(this::onClick);
+ buttonDiv.setOnClickListener(this::onClick);
+ notifybtn.setOnClickListener(new View.OnClickListener() {
+ @SuppressLint("MissingPermission")
+ @Override
+ public void onClick(View view) {
+ NotificationCompat.Builder builder = new 
+NotificationCompat.Builder(MainActivity.this, "My Notification");
+builder.setContentTitle("Ats Calculator");
+ builder.setContentText("Result"+textView.getText().toString());
+ builder.setSmallIcon(R.drawable.ic_launcher_background);
+ builder.setAutoCancel(true);
+ NotificationManagerCompat managerCompat = 
+NotificationManagerCompat.from(MainActivity.this);
+ managerCompat.notify(1, builder.build());
+ }
+ });
+ }
+ public int getIntFromEditText(EditText editText) {
+ if (editText.getText().toString().equals("")) {
+ Toast.makeText(this, "Enter Valid number", 
+Toast.LENGTH_SHORT).show();
+ return 0;
+ } else
+ return Integer.parseInt(editText.getText().toString());
+ }
+ @Override
+ public void onClick(View view) {
+ num1 = getIntFromEditText(editTextN1);
+ num2 = getIntFromEditText(editTextN2);
+ int id = view.getId();
+ if (id == R.id.btn_add) {
+ textView.setText("Answer = " + (num1 + num2));
+ } else if (id == R.id.btn_sub) {
+ textView.setText("Answer = " + (num1 - num2));
+ } else if (id == R.id.btn_mul) {
+ textView.setText("Answer = " + (num1 * num2));
+ } else if (id == R.id.btn_div) {
+textView.setText("Answer = " + ((float) num1 / (float) num2));
+ }
+ }
+}
+
+
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+ xmlns:app="http://schemas.android.com/apk/res-auto"
+ xmlns:tools="http://schemas.android.com/tools"
+ android:layout_width="match_parent"
+ android:layout_height="match_parent"
+ android:orientation="vertical"
+ android:padding="20dp"
+ tools:context=".MainActivity">
+ <TextView
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:text="ATS Calculator"
+ android:textSize="30sp"
+ android:textStyle="bold"
+ android:layout_marginTop="50dp"
+ android:layout_gravity="center"
+ />
+ <EditText
+ android:id="@+id/number1"
+ android:layout_width="match_parent"
+ android:layout_height="wrap_content"
+ android:layout_marginTop="30dp"
+ android:hint="Enter Number 1 :"
+ android:inputType="number"
+ />
+<EditText
+ android:id="@+id/number2"
+ android:layout_width="match_parent"
+ android:layout_height="wrap_content"
+ android:layout_marginTop="10dp"
+ android:hint="Enter Number 2 :"
+ android:inputType="number"
+ />
+ <LinearLayout
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:orientation="horizontal">
+ <Button
+ android:id="@+id/btn_add"
+ style="@style/Widget.AppCompat.Button.Colored"
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:layout_marginEnd="5dp"
+ android:text="+"
+ android:textSize="30sp" />
+ <Button
+ android:id="@+id/btn_sub"
+ style="@style/Widget.AppCompat.Button.Colored"
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:layout_marginEnd="5dp"
+ android:text="-"
+ android:textSize="30sp" />
+ <Button
+ android:id="@+id/btn_mul"
+ style="@style/Widget.AppCompat.Button.Colored"
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+android:layout_marginEnd="5dp"
+ android:text="*"
+ android:textSize="30sp" />
+ <Button
+ android:id="@+id/btn_div"
+ style="@style/Widget.AppCompat.Button.Colored"
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:layout_marginEnd="5dp"
+ android:text="/"
+ android:textSize="30sp" />
+ </LinearLayout>
+ <TextView
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:id="@+id/result"
+ android:layout_gravity="center"
+ android:textSize="30sp"
+ android:textStyle="bold"
+ android:layout_marginTop="30dp"/>
+ <Button
+ android:layout_width="wrap_content"
+ android:layout_height="wrap_content"
+ android:layout_gravity="center"
+ android:text="Get Notified"
+ android:textSize="15dp"
+ android:id="@+id/btn_notify"
+ />
+</LinearLayout>
+
+-------------------------------
+---------------------------------
+--------------------------------
+
 
