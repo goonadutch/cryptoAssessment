@@ -2507,3 +2507,299 @@ public class MainActivity extends AppCompatActivity {
 ------------------------------------------------------------
 ------------------------------------------------------------
 
+
+
+
+vector_square - drawable
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:height="640dp"
+    android:width="640dp"
+    android:viewportHeight="600"
+    android:viewportWidth="600">
+    <group
+        android:name="rotationSquare"
+        android:pivotX="300.0"
+        android:pivotY="300.0"
+        android:rotation="45.0" > <!-- Set rotation to 0 to keep it as a square -->
+        <path
+            android:name="square"
+            android:fillColor="#d3e39a"
+            android:pathData="M300,0 L400,0 L400,200 L300,200 Z" /> <!-- Defines a square -->
+    </group>
+</vector>
+
+
+vector_demo
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:height="640dp"
+    android:width="640dp"
+    android:viewportHeight="600"
+    android:viewportWidth="600">
+    <group
+        android:name="rotationGroup"
+        android:pivotX="300.0"
+        android:pivotY="300.0"
+        android:rotation="45.0" >
+        <path
+            android:name="v"
+            android:fillColor="#9ac1e3"
+            android:pathData="M300,140 l 0,-140 140,140 0,0 -140,70z" />
+    </group>
+</vector>
+
+vector_circle
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:height="1280dp"
+    android:width="1280dp"
+    android:viewportHeight="600"
+    android:viewportWidth="600">
+    <group
+        android:name="circleGroup"
+        android:pivotX="300.0"
+        android:pivotY="300.0"
+        android:rotation="0.0">
+        <path
+            android:name="circle"
+            android:fillColor="#e39a9c"
+            android:pathData="M350,150 a50,50 0 1,0 150,0 a50,50 0 1,0 -150,0" />
+        <!-- Larger circle with a radius of 50 -->
+    </group>
+</vector>
+
+
+mainActivity.java: 
+package com.example.graphics;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.ViewCompat;
+
+import android.animation.Animator;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
+import android.graphics.drawable.Animatable2;
+import android.graphics.drawable.AnimatedVectorDrawable;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.Handler;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.Random;
+
+public class MainActivity extends AppCompatActivity {
+    private View circularView;
+    private GestureDetector gestureDetector;
+    private Handler handler = new Handler();
+    private Button btn;
+    private ImageView imageView;
+    private AnimatedVectorDrawable animatedVectorDrawable1,animatedVectorDrawable2,animatedVectorDrawable3;
+
+    @SuppressLint("MissingInflatedId")
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        circularView = findViewById(R.id.circle);
+        imageView=findViewById(R.id.imageAni);
+        btn=findViewById(R.id.btn);
+
+        animatedVectorDrawable1=(AnimatedVectorDrawable) getResources().getDrawable(R.drawable.animated_circle);
+        animatedVectorDrawable2=(AnimatedVectorDrawable) getResources().getDrawable(R.drawable.animated_square);
+        animatedVectorDrawable3=(AnimatedVectorDrawable) getResources().getDrawable(R.drawable.animated_demo);
+
+        imageView.setImageDrawable(animatedVectorDrawable1);
+        // Create a GestureDetector to detect double-taps
+        gestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
+            @Override
+            public boolean onDoubleTap(MotionEvent e) {
+                int tintColor = generateRandomColor();
+                ViewCompat.setBackgroundTintList(circularView, ColorStateList.valueOf(tintColor));
+                return true;
+            }
+        });
+
+        circularView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                // Pass touch events to the GestureDetector to handle double-tap
+                gestureDetector.onTouchEvent(event);
+                return true;
+            }
+        });
+    }
+    private void showToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    private int generateRandomColor() {
+        Random random = new Random();
+        int red = random.nextInt(256);
+        int green = random.nextInt(256);
+        int blue = random.nextInt(256);
+        return Color.rgb(red, green, blue);
+    }
+
+    public void startAnimation(View view) {
+        imageView.setVisibility(View.VISIBLE);
+        circularView.setVisibility(View.INVISIBLE);
+
+        // Start the animation
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (animatedVectorDrawable1 != null) {
+                    animatedVectorDrawable1.start();
+                }
+            }
+        }, 0); // Delay of 0 milliseconds
+
+        // Start the second animation after a delay
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                imageView.setImageDrawable(animatedVectorDrawable2);
+                if (animatedVectorDrawable2 != null) {
+                    animatedVectorDrawable2.start();
+                }
+            }
+        }, 6000); // Delay of 3000 milliseconds (3 seconds)
+
+        // Start the third animation after a delay
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                imageView.setImageDrawable(animatedVectorDrawable3);
+                if (animatedVectorDrawable3 != null) {
+                    animatedVectorDrawable3.start();
+                }
+            }
+        }, 12000);
+
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                imageView.setVisibility(View.INVISIBLE);
+                circularView.setVisibility(View.VISIBLE);
+            }
+        }, 19000);
+    }
+}
+
+Activity.xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <View
+        android:id="@+id/circle"
+        android:layout_width="109dp"
+        android:layout_height="97dp"
+        android:layout_centerInParent="true"
+        android:background="@drawable/circle_shape"
+        app:layout_constraintBottom_toTopOf="@id/btn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+
+        app:layout_constraintTop_toBottomOf="@id/circle" />
+
+    <Button
+        android:id="@+id/btn"
+        android:layout_width="177dp"
+        android:layout_height="73dp"
+        android:layout_marginBottom="208dp"
+        android:backgroundTint="#e3bc9a"
+        android:onClick="startAnimation"
+        android:text="Graphics"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageAni"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/vector_demo"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@id/btn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.867" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+circle_shape - drawable
+<shape xmlns:android="http://schemas.android.com/apk/res/android"  android:shape="rectangle">
+    <solid android:color="#bc9ae3" />
+    <size
+        android:width="100dp"
+        android:height="100dp" />
+</shape>
+
+animated_square - drawable
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:drawable="@drawable/vector_square" >
+    <target
+        android:name="rotationSquare"
+        android:animation="@animator/rotation" />
+    <!--    <target-->
+    <!--        android:name="v"-->
+    <!--        android:animation="@animator/path_morph" />-->
+</animated-vector>
+
+animated_demo - drawable
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:drawable="@drawable/vector_demo" >
+    <target
+        android:name="rotationGroup"
+        android:animation="@animator/rotation" />
+    <!--    <target-->
+    <!--        android:name="v"-->
+    <!--        android:animation="@animator/path_morph" />-->
+</animated-vector>
+
+animated_circle - drawable
+  android:drawable="@drawable/vector_circle" >
+    <target
+        android:name="circleGroup"
+        android:animation="@animator/rotation" />
+    <!--    <target-->
+    <!--        android:name="v"-->
+    <!--        android:animation="@animator/path_morph" />-->
+</animated-vector>
+
+path_morph - animator - res
+<set xmlns:android="http://schemas.android.com/apk/res/android">
+    <objectAnimator
+        android:duration="3000"
+        android:propertyName="pathData"
+        android:valueFrom="M300,70 l 0,-70 70,70 0,0   -70,70z"
+        android:valueTo="M300,70 l 0,-70 70,0  0,140 -70,0 z"
+        android:valueType="pathType" />
+</set>
+
+rotation - res - animator
+<objectAnimator android:duration="6000"
+    android:propertyName="rotation"
+    android:valueFrom="0"
+    android:valueTo="360"
+    xmlns:android="http://schemas.android.com/apk/res/android" />
+
+
