@@ -2008,5 +2008,402 @@ class GFG {
 }
 
 
+-----------------------------------------------
+-----------------------------------------------
+-----------------------------------------------
 
+
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity"
+    android:background="@color/black"
+    android:padding="20dp">
+
+    <TextView
+        android:id="@+id/screen"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="0"
+        android:textStyle="bold"
+        android:textSize="60dp"
+        android:textColor="#FFFFFF"
+        android:paddingHorizontal="15dp"
+        android:paddingVertical="35dp"
+        android:layout_above="@+id/nums"/>
+
+    <LinearLayout
+        android:id="@+id/nums"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:paddingTop="20dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/on"
+                android:text="ON"
+                style="@style/Button1" />
+
+            <Button
+                android:id="@+id/num7"
+                android:text="7"
+                style="@style/Button2" />
+
+            <Button
+                android:id="@+id/num4"
+                android:text="4"
+                style="@style/Button2"/>
+
+            <Button
+                android:id="@+id/num1"
+                android:text="1"
+                style="@style/Button2"/>
+
+            <Button
+                android:id="@+id/del"
+                android:text="del"
+                style="@style/Button1"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/off"
+                android:text="off"
+                style="@style/Button1"/>
+
+            <Button
+                android:id="@+id/num8"
+                android:text="8"
+                style="@style/Button2"/>
+
+            <Button
+                android:id="@+id/num5"
+                android:text="5"
+                style="@style/Button2"/>
+
+            <Button
+                android:id="@+id/num2"
+                android:text="2"
+                style="@style/Button2"/>
+
+            <Button
+                android:id="@+id/num0"
+                android:text="0"
+                style="@style/Button2"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/ac"
+                android:text="ac"
+                style="@style/Button1"/>
+
+            <Button
+                android:id="@+id/num9"
+                android:text="9"
+                style="@style/Button2"/>
+
+            <Button
+                android:id="@+id/num6"
+                android:text="6"
+                style="@style/Button2"/>
+
+            <Button
+                android:id="@+id/num3"
+                android:text="3"
+                style="@style/Button2"/>
+
+            <Button
+                android:id="@+id/point"
+                android:text="."
+                style="@style/Button2"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/div"
+                android:text="/"
+                style="@style/Button1"/>
+
+            <Button
+                android:id="@+id/times"
+                android:text="*"
+                style="@style/Button1"/>
+
+            <Button
+                android:id="@+id/min"
+                android:text="-"
+                style="@style/Button1"/>
+
+            <Button
+                android:id="@+id/plus"
+                android:text="+"
+                style="@style/Button1"/>
+
+            <Button
+                android:id="@+id/equal"
+                android:text="="
+                style="@style/Button1"/>
+
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>
+
+
+package com.example.calculator;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.os.Bundle;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.content.pm.PackageManager;
+import android.os.Build;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.regex.Pattern;
+
+public class MainActivity extends AppCompatActivity {
+
+    double firstNum;
+    String operation;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        Button num0 = findViewById(R.id.num0);
+        Button num1 = findViewById(R.id.num1);
+        Button num2 = findViewById(R.id.num2);
+        Button num3 = findViewById(R.id.num3);
+        Button num4 = findViewById(R.id.num4);
+        Button num5 = findViewById(R.id.num5);
+        Button num6 = findViewById(R.id.num6);
+        Button num7 = findViewById(R.id.num7);
+        Button num8 = findViewById(R.id.num8);
+        Button num9 = findViewById(R.id.num9);
+
+        Button on = findViewById(R.id.on);
+        Button off = findViewById(R.id.off);
+        Button ac = findViewById(R.id.ac);
+        Button del = findViewById(R.id.del);
+        Button div = findViewById(R.id.div);
+        Button times = findViewById(R.id.times);
+        Button min = findViewById(R.id.min);
+        Button equal = findViewById(R.id.equal);
+        Button plus = findViewById(R.id.plus);
+        Button point = findViewById(R.id.point);
+
+        TextView screen = findViewById(R.id.screen);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel ch = new NotificationChannel("calculator_channel", "Calculator Channel",
+                    NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            manager.createNotificationChannel(ch);
+        }
+
+
+        ac.setOnClickListener(view -> {
+            firstNum = 0;
+            screen.setText("0");
+        });
+
+        off.setOnClickListener(view -> screen.setVisibility(View.GONE));
+        on.setOnClickListener(view -> {
+            screen.setVisibility(View.VISIBLE);
+            screen.setText("0");
+        });
+
+        ArrayList<Button> nums = new ArrayList<>();
+        nums.add(num0);
+        nums.add(num1);
+        nums.add(num2);
+        nums.add(num3);
+        nums.add(num4);
+        nums.add(num5);
+        nums.add(num6);
+        nums.add(num7);
+        nums.add(num8);
+        nums.add(num9);
+
+        for (Button b : nums) {
+            b.setOnClickListener(view -> {
+                if (!screen.getText().toString().equals("0")) {
+                    screen.setText(screen.getText().toString() + b.getText().toString());
+                } else {
+                    screen.setText(b.getText().toString());
+                }
+            });
+        }
+
+        ArrayList<Button> opers = new ArrayList<>();
+        opers.add(div);
+        opers.add(times);
+        opers.add(plus);
+        opers.add(min);
+
+        for (Button b : opers) {
+            b.setOnClickListener(view -> {
+                firstNum = Double.parseDouble(screen.getText().toString());
+                operation = b.getText().toString();
+                screen.setText("");
+            });
+        }
+
+
+
+
+        del.setOnClickListener(view -> {
+            String num = screen.getText().toString();
+            if (num.length() > 1) {
+                screen.setText(num.substring(0, num.length() - 1));
+            } else if (num.length() == 1 && !num.equals("0")) {
+                screen.setText("0");
+            }
+        });
+
+        point.setOnClickListener(view -> {
+            if (!screen.getText().toString().contains(".")) {
+                screen.setText(screen.getText().toString() + ".");
+            }
+        });
+
+        equal.setOnClickListener(view -> {
+            if (!screen.getText().toString().isEmpty()) {
+                double secondNum = Double.parseDouble(screen.getText().toString());
+                double result;
+                switch (operation) {
+                    case "/":
+                        result = firstNum / secondNum;
+                        break;
+                    case "*":
+                        result = firstNum * secondNum;
+                        break;
+                    case "+":
+                        result = firstNum + secondNum;
+                        break;
+                    case "-":
+                        result = firstNum - secondNum;
+                        break;
+                    default:
+                        result = 0;
+                }
+                screen.setText(String.valueOf(result));
+                showNotification("Calculator Result", String.valueOf(result));
+            }
+        });
+
+    }
+
+    private void showNotification(String calculatorResult, String valueOf) {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "calculator_channel")
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setContentTitle(calculatorResult)
+                .setContentText(valueOf)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        notificationManager.notify(1, builder.build());
+    }
+}
+
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <solid android:color="#00BCD4"/>
+</shape>
+
+
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <solid android:color="#3F51B5"/>
+</shape>
+
+
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Theme.Calculator" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/black</item>
+        <item name="colorPrimaryVariant">@color/black</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/black</item>
+        <item name="colorSecondaryVariant">@color/black</item>
+        <item name="colorOnSecondary">@color/black</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+        <!-- Customize your theme here. -->
+    </style>
+
+    <style name="Button1">
+        <item name="android:layout_width">75dp</item>
+        <item name="android:layout_height">75dp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">27dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:layout_margin">10dp</item>
+        <item name="android:background">@drawable/shape1</item>
+    </style>
+
+    <style name="Button2">
+        <item name="android:layout_width">75dp</item>
+        <item name="android:layout_height">75dp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">27dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:layout_margin">10dp</item>
+        <item name="android:background">@drawable/shape2</item>
+    </style>
+</resources>
+
+-----------------------------------------------------------
+------------------------------------------------------------
+------------------------------------------------------------
 
