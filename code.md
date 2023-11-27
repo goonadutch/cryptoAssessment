@@ -821,7 +821,7 @@ public class dss{
         System.out.println(verify(BigInteger.valueOf(123), e1, e2, sign[0], sign[1], p, q));
     }
 }
--------------------DSA----------------
+-------------------DSS----------------
 import java.io.*;
 import java.util.*;
 public class DSS
@@ -2112,6 +2112,7 @@ class GFG {
 -----------------------------------------------
 -----------------------------------------------
 
+CAlculator
 
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -2508,7 +2509,7 @@ public class MainActivity extends AppCompatActivity {
 ------------------------------------------------------------
 
 
-
+animation
 
 vector_square - drawable
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
@@ -3403,4 +3404,138 @@ android:layout_marginEnd="5dp"
 ---------------------------------
 --------------------------------
 
+change colour
+
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    tools:context=".MainActivity">
+
+    <ImageView
+        android:id="@+id/shapeImageView"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_centerInParent="true"
+        android:src="@drawable/circle_shape"
+        android:clickable="true"
+        android:onClick="changeShapeColor"
+        android:background="?attr/selectableItemBackgroundBorderless"/>
+
+</RelativeLayout>
+
+drawable - circle_Shape
+
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <solid android:color="#FF5733"/> <!-- Initial color -->
+</shape>
+
+MainACtivity.java
+import android.graphics.drawable.ColorDrawable;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageView;
+
+import androidx.annotation.ColorInt;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+
+    private ImageView shapeImageView;
+    private int[] colors = {0xFF5733, 0xFFC300, 0xFF5733}; // Colors to cycle through
+    private int colorIndex = 0;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        shapeImageView = findViewById(R.id.shapeImageView);
+    }
+
+    public void changeShapeColor(View view) {
+        if (colorIndex < colors.length - 1) {
+            colorIndex++;
+        } else {
+            colorIndex = 0;
+        }
+
+        @ColorInt int newColor = colors[colorIndex];
+        shapeImageView.setImageDrawable(new ColorDrawable(newColor));
+    }
+}
+
+----------------------------------
+------------------------------------
+----------------------------------
+
+change shape 
+
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+    <View
+        android:id="@+id/shapeView"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:background="@drawable/circle_shape"
+        android:layout_centerInParent="true"
+        android:clickable="true"
+        android:focusable="true"
+        android:onClick="changeShapeOnClick" />
+
+</RelativeLayout>
+
+drawable 
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <solid android:color="#FF0000" /> <!-- Red circle -->
+</shape>
+
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="#00FF00" /> <!-- Green rectangle -->
+</shape>
+MainACtivity.java
+package com.example.shapechanger;
+
+import androidx.appcompat.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Toast;
+
+public class MainActivity extends AppCompatActivity {
+
+    private boolean isCircle = true;
+    private View shapeView;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        shapeView = findViewById(R.id.shapeView);
+    }
+
+    public void changeShapeOnClick(View view) {
+        if (isCircle) {
+            shapeView.setBackgroundResource(R.drawable.rectangle_shape);
+        } else {
+            shapeView.setBackgroundResource(R.drawable.circle_shape);
+        }
+        isCircle = !isCircle;
+    }
+}
 
